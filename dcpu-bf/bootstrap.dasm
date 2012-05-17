@@ -4,7 +4,7 @@
 ; Z is the keyboard device number
 ; B is the cursor location on the screen
 ; Data pointer begins at the end of the program + 100
-; Screen is mapped to 0xFE7D (the end of addressable memory)
+; Screen is mapped to 0xFE6D (the end of addressable memory)
 
 ; INITIALIZATION
 
@@ -30,7 +30,7 @@ SUB I, 1
 
 :hw_found
     SET A, 0
-    SET B, 0xFE7D
+    SET B, 0xFE6D
     HWI Y ; Map screen memory
 
     SET PC, start
@@ -44,14 +44,14 @@ SUB I, 1
     SET [B], C
     ADD B, 1
     IFE B, 0
-        SET B, 0xFE7D ; Wrap around to start of screen memory
+        SET B, 0xFE6D ; Wrap around to start of screen memory
     SET PC, POP
 :output_char_newline
     DIV B, 128
     MUL B, 128
     ADD B, 128
     IFL B, 128
-        SET B, 0xFE7D
+        SET B, 0xFE6D
     SET PC, POP
 
 :read_key_in
