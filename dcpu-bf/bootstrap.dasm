@@ -1,0 +1,69 @@
+﻿; DCPU-BF Compiled Code
+; I is the data pointer
+; Y is the screen device number
+; Z is the keyboard device number
+; B is the cursor location on the screen
+; Data pointer begins at the end of the program + 100
+; Screen is mapped to 0xFE7D (the end of addressable memory)
+
+; INITIALIZATION
+
+; Set up hardware
+HWN I
+SUB I, 1
+:hw_init_loop
+    IFE I, 0xFFFF
+        SET PC, hw_found
+    SET PUSH, Y
+    SET PUSH, Z
+        HWQ I
+    SET Z, POP
+    SET Y, POP
+    IFE A, 0xf615
+        IFE B, 0x7349
+            SET Y, I ; Screen
+    IFE A, 0x7406
+        IFE B, 0x30cf
+            SET Z, I ; Keyboard
+    SUB I, 1
+    SET PC, hw_init_loop
+
+:hw_found
+    SET A, 0
+    SET B, 0xFE7D
+    HWI Y ; Map screen memory
+
+    SET PC, start
+
+; SUBROUTINES
+:output_char
+    SET C, [A]
+    IFE C, 0x0A ; '\n'
+        SET PC, output_char_newline
+    BOR C, 0xF000
+    SET [B], C
+    ADD B, 1
+    IFE B, 0
+        SET B, 0xFE7D ; Wrap around to start of screen memory
+    SET PC, POP
+:output_char_newline
+    DIV B, 128
+    MUL B, 128
+    ADD B, 128
+    IFL B, 128
+        SET B, 0xFE7D
+    SET PC, POP
+
+:read_key_in
+    SET PUSH, A
+        SET A, 1
+:read_key_in_loop
+        HWI Z
+        IFE C, 0
+            SET PC, read_key_in_loop
+    SET A, POP
+    SET [A], C
+    SET PC, POP
+
+:start
+; BEGIN BRAINFUCK CODE

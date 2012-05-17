@@ -1,0 +1,8 @@
+DCPU-BF
+=======
+
+A compiler for the Brainfuck programming language targeting DCPU-16.
+
+Use "dcpu-bf.exe inputfile.bf outputfile.dasm".  If no output file is specified, then it will use "[inputfile].dasm" for the output.
+
+Requires Mono.  On most versions of Linux, "sudo apt-get install mono-complete" or "sudo yum install mono-complete" will do the trick.  Then, you should start up DCPU-BF with mono: "mono dcpu-bf.exe inputfile.bf outputfile.dasm"
