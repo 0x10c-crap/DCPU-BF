@@ -152,7 +152,10 @@ namespace dcpu_bf
                         }
                         valueOffset--;
                         break;
-                    default:
+                    case '.':
+                    case ',':
+                    case '[':
+                    case ']':
                         if (dataOffset > 0)
                         {
                             output += "ADD A, " + dataOffset.ToString() + "\n";
