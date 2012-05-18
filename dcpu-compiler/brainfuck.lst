@@ -1,0 +1,215 @@
+brainfuck.dasm (line 4):   [0x0000] 7CC1 000A       SET I, bf_code
+brainfuck.dasm (line 5):   [0x0002] 7CE1 018F       SET J, bf_output
+brainfuck.dasm (line 6):   [0x0004] 7C20 007A       JSR bf_compile
+brainfuck.dasm (line 7):   [0x0006] 7C20 018F       JSR bf_output
+brainfuck.dasm (line 8):   [0x0008] 7F83 0001       SUB PC, 1
+brainfuck.dasm (line 10):  [0x000A]               bf_code:
+brainfuck.dasm (line 12):  [0x000A]                 .dw "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.", 0
+brainfuck.dasm (line 12):  [0x000A]                      002B 002B 002B 002B 002B 002B 002B 002B
+brainfuck.dasm (line 12):  [0x0012]                      002B 002B 005B 003E 002B 002B 002B 002B
+brainfuck.dasm (line 12):  [0x001A]                      002B 002B 002B 003E 002B 002B 002B 002B
+brainfuck.dasm (line 12):  [0x0022]                      002B 002B 002B 002B 002B 002B 003E 002B
+brainfuck.dasm (line 12):  [0x002A]                      002B 002B 003E 002B 003C 003C 003C 003C
+brainfuck.dasm (line 12):  [0x0032]                      002D 005D 003E 002B 002B 002E 003E 002B
+brainfuck.dasm (line 12):  [0x003A]                      002E 002B 002B 002B 002B 002B 002B 002B
+brainfuck.dasm (line 12):  [0x0042]                      002E 002E 002B 002B 002B 002E 003E 002B
+brainfuck.dasm (line 12):  [0x004A]                      002B 002E 003C 003C 002B 002B 002B 002B
+brainfuck.dasm (line 12):  [0x0052]                      002B 002B 002B 002B 002B 002B 002B 002B
+brainfuck.dasm (line 12):  [0x005A]                      002B 002B 002B 002E 003E 002E 002B 002B
+brainfuck.dasm (line 12):  [0x0062]                      002B 002E 002D 002D 002D 002D 002D 002D
+brainfuck.dasm (line 12):  [0x006A]                      002E 002D 002D 002D 002D 002D 002D 002D
+brainfuck.dasm (line 12):  [0x0072]                      002D 002E 003E 002B 002E 003E 002E 0000
+brainfuck.dasm (line 14):  [0x007A]               bf_compile:
+brainfuck.dasm (line 19):  [0x007A] 7FC1 0021 0118  SET [ptr_output_char], output_char
+brainfuck.dasm (line 20):  [0x007D] 7FC1 003B 0119  SET [ptr_read_key], read_key_in
+brainfuck.dasm (line 21):  [0x0080] 1FC2 0118       ADD [ptr_output_char], J
+brainfuck.dasm (line 22):  [0x0082] 1FC2 0119       ADD [ptr_read_key], J
+brainfuck.dasm (line 23):  [0x0084] 1C01            SET A, J
+brainfuck.dasm (line 24):  [0x0085] 1821            SET B, I
+brainfuck.dasm (line 25):  [0x0086] 7C41 FF01       SET C, bf_bootstrap_end - bf_bootstrap_ln
+brainfuck.dasm (line 26):  [0x0088] 7C20 011A       JSR memcpy
+brainfuck.dasm (line 28):  [0x008A] 7CE2 FF01       ADD J, bf_bootstrap_end - bf_bootstrap_ln
+brainfuck.dasm (line 30):  [0x008C] 7CC3 0001       SUB I, 1
+brainfuck.dasm (line 31):  [0x008E]               loop:
+brainfuck.dasm (line 32):  [0x008E] 7CC2 0001       ADD I, 1
+brainfuck.dasm (line 33):  [0x0090] 7DD2 0000       IFE [I], 0
+brainfuck.dasm (line 34):  [0x0092] 7F81 0115       SET PC, loop_done
+brainfuck.dasm (line 35):  [0x0094] 7DD2 002B       IFE [I], '+'
+brainfuck.dasm (line 36):  [0x0096] 7DD2 002D       IFE [I], '-'
+brainfuck.dasm (line 37):  [0x0098] 7DD2 003E       IFE [I], '>'
+brainfuck.dasm (line 38):  [0x009A] 7DD2 003C       IFE [I], '<'
+brainfuck.dasm (line 39):  [0x009C] 7DD2 002C       IFE [I], ','
+brainfuck.dasm (line 40):  [0x009E] 7DD2 002E       IFE [I], '.'
+brainfuck.dasm (line 41):  [0x00A0] 7F81 00A4       SET PC, loop_compile
+brainfuck.dasm (line 42):  [0x00A2] 7F81 008E       SET PC, loop
+brainfuck.dasm (line 43):  [0x00A4]               loop_compile:
+brainfuck.dasm (line 44):  [0x00A4] 7DD2 002B       IFE [I], '+'
+brainfuck.dasm (line 45):  [0x00A6] 7F81 00CA       SET PC, bf_inc_val
+brainfuck.dasm (line 46):  [0x00A8] 7DD2 002D       IFE [I], '-'
+brainfuck.dasm (line 47):  [0x00AA] 7F81 00D4       SET PC, bf_dec_val
+brainfuck.dasm (line 48):  [0x00AC] 7DD2 003E       IFE [I], '>'
+brainfuck.dasm (line 49):  [0x00AE] 7F81 00DE       SET PC, bf_inc_ptr
+brainfuck.dasm (line 50):  [0x00B0] 7DD2 003C       IFE [I], '<'
+brainfuck.dasm (line 51):  [0x00B2] 7F81 00E8       SET PC, bf_dec_ptr
+brainfuck.dasm (line 52):  [0x00B4] 7CE1 7C20       SET J, {JSR 0x8000}
+brainfuck.dasm (line 53):  [0x00B6] 7CE2 0001       ADD J, 1
+brainfuck.dasm (line 54):  [0x00B8] 7FD3 0000 0117  IFN [ptr_inc_count], 0
+brainfuck.dasm (line 55):  [0x00BB] 7C20 0107       JSR output_ptr_inc
+brainfuck.dasm (line 56):  [0x00BD] 7FD3 0000 0116  IFN [val_inc_count], 0
+brainfuck.dasm (line 57):  [0x00C0] 7C20 00FE       JSR output_val_inc
+brainfuck.dasm (line 58):  [0x00C2] 7DD2 002C       IFE [I], ','
+brainfuck.dasm (line 59):  [0x00C4] 7F81 00F2       SET PC, bf_read_key
+brainfuck.dasm (line 60):  [0x00C6] 7DD2 002E       IFE [I], '.'
+brainfuck.dasm (line 61):  [0x00C8] 7F81 00F8       SET PC, bf_put_char
+brainfuck.dasm (line 62):  [0x00CA]               bf_inc_val:
+brainfuck.dasm (line 63):  [0x00CA] 7FC2 0001 0116  ADD [val_inc_count], 1
+brainfuck.dasm (line 64):  [0x00CD] 7FD3 0000 0117  IFN [ptr_inc_count], 0
+brainfuck.dasm (line 65):  [0x00D0] 7C20 0107       JSR output_ptr_inc
+brainfuck.dasm (line 66):  [0x00D2] 7F81 008E       SET PC, loop
+brainfuck.dasm (line 67):  [0x00D4]               bf_dec_val:
+brainfuck.dasm (line 68):  [0x00D4] 7FC3 0001 0116  SUB [val_inc_count], 1
+brainfuck.dasm (line 69):  [0x00D7] 7FD3 0000 0117  IFN [ptr_inc_count], 0
+brainfuck.dasm (line 70):  [0x00DA] 7C20 0107       JSR output_ptr_inc
+brainfuck.dasm (line 71):  [0x00DC] 7F81 008E       SET PC, loop
+brainfuck.dasm (line 72):  [0x00DE]               bf_inc_ptr:
+brainfuck.dasm (line 73):  [0x00DE] 7FC2 0001 0117  ADD [ptr_inc_count], 1
+brainfuck.dasm (line 74):  [0x00E1] 7FD3 0000 0116  IFN [val_inc_count], 0
+brainfuck.dasm (line 75):  [0x00E4] 7C20 00FE       JSR output_val_inc
+brainfuck.dasm (line 76):  [0x00E6] 7F81 008E       SET PC, loop
+brainfuck.dasm (line 77):  [0x00E8]               bf_dec_ptr:
+brainfuck.dasm (line 78):  [0x00E8] 7FC3 0001 0117  SUB [ptr_inc_count], 1
+brainfuck.dasm (line 79):  [0x00EB] 7FD3 0000 0116  IFN [val_inc_count], 0
+brainfuck.dasm (line 80):  [0x00EE] 7C20 00FE       JSR output_val_inc
+brainfuck.dasm (line 81):  [0x00F0] 7F81 008E       SET PC, loop
+brainfuck.dasm (line 82):  [0x00F2]               bf_read_key:
+brainfuck.dasm (line 83):  [0x00F2] 79E1 0118       SET [J], [ptr_output_char]
+brainfuck.dasm (line 84):  [0x00F4] 7CE2 0001       ADD J, 1
+brainfuck.dasm (line 85):  [0x00F6] 7F81 008E       SET PC, loop
+brainfuck.dasm (line 86):  [0x00F8]               bf_put_char:
+brainfuck.dasm (line 87):  [0x00F8] 79E1 0119       SET [J], [ptr_read_key]
+brainfuck.dasm (line 88):  [0x00FA] 7CE2 0001       ADD J, 1
+brainfuck.dasm (line 89):  [0x00FC] 7F81 008E       SET PC, loop
+brainfuck.dasm (line 91):  [0x00FE]               output_val_inc:
+brainfuck.dasm (line 92):  [0x00FE] 7C01 7D02       SET A, {ADD [A], 0x8000}
+brainfuck.dasm (line 93):  [0x0100] 7821 0116       SET B, [val_inc_count]
+brainfuck.dasm (line 94):  [0x0102] 7FC1 0000 0116  SET [val_inc_count], 0
+brainfuck.dasm (line 95):  [0x0105] 7F81 010E       SET PC, output_inc
+brainfuck.dasm (line 96):  [0x0107]               output_ptr_inc:
+brainfuck.dasm (line 97):  [0x0107] 7C01 7C02       SET A, {ADD A, 0x8000}
+brainfuck.dasm (line 98):  [0x0109] 7821 0117       SET B, [ptr_inc_count]
+brainfuck.dasm (line 99):  [0x010B] 7FC1 0000 0117  SET [ptr_inc_count], 0
+brainfuck.dasm (line 100): [0x010E]               output_inc:
+brainfuck.dasm (line 101): [0x010E] 01E1            SET [J], A
+brainfuck.dasm (line 102): [0x010F] 7CE2 0001       ADD J, 1
+brainfuck.dasm (line 103): [0x0111] 05E1            SET [J], B
+brainfuck.dasm (line 104): [0x0112] 7CE2 0001       ADD J, 1
+brainfuck.dasm (line 105): [0x0114] 6381            SET PC, POP
+brainfuck.dasm (line 107): [0x0115]               loop_done:
+brainfuck.dasm (line 108): [0x0115] 6381            SET PC, POP
+brainfuck.dasm (line 111): [0x0116]               val_inc_count:
+brainfuck.dasm (line 112): [0x0116]                 .dw 0
+brainfuck.dasm (line 112): [0x0116]                      0000
+brainfuck.dasm (line 113): [0x0117]               ptr_inc_count:
+brainfuck.dasm (line 114): [0x0117]                 .dw 0
+brainfuck.dasm (line 114): [0x0117]                      0000
+brainfuck.dasm (line 115): [0x0118]               ptr_output_char:
+brainfuck.dasm (line 116): [0x0118]                 .dw output_char
+brainfuck.dasm (line 116): [0x0118]                      0021
+brainfuck.dasm (line 117): [0x0119]               ptr_read_key:
+brainfuck.dasm (line 118): [0x0119]                 .dw read_key_in
+brainfuck.dasm (line 118): [0x0119]                      003B
+brainfuck.dasm (line 121): [0x011A]               :memcpy
+brainfuck.dasm (line 122): [0x011A] 1F01            SET PUSH, J
+brainfuck.dasm (line 123): [0x011B] 6CE1            SET J, SP
+brainfuck.dasm (line 125): [0x011C] 0761            SET SP, B
+brainfuck.dasm (line 126): [0x011D] 0822            ADD B, C
+brainfuck.dasm (line 128): [0x011E] 7F81 013D       SET PC, .duff
+brainfuck.dasm (line 130): [0x0120]               :.loop
+brainfuck.dasm (line 131): [0x0120] 0772            IFE SP, B
+brainfuck.dasm (line 132): [0x0121] 7F81 0144       SET PC, .end
+brainfuck.dasm (line 134): [0x0123] 6101            SET [A], POP
+brainfuck.dasm (line 135): [0x0124] 7C02 0001       ADD A, 0x01
+brainfuck.dasm (line 136): [0x0126] 6101            SET [A], POP
+brainfuck.dasm (line 137): [0x0127] 7C02 0001       ADD A, 0x01
+brainfuck.dasm (line 138): [0x0129] 6101            SET [A], POP
+brainfuck.dasm (line 139): [0x012A] 7C02 0001       ADD A, 0x01
+brainfuck.dasm (line 140): [0x012C] 6101            SET [A], POP
+brainfuck.dasm (line 141): [0x012D] 7C02 0001       ADD A, 0x01
+brainfuck.dasm (line 142): [0x012F] 6101            SET [A], POP
+brainfuck.dasm (line 143): [0x0130] 7C02 0001       ADD A, 0x01
+brainfuck.dasm (line 144): [0x0132] 6101            SET [A], POP
+brainfuck.dasm (line 145): [0x0133] 7C02 0001       ADD A, 0x01
+brainfuck.dasm (line 146): [0x0135] 6101            SET [A], POP
+brainfuck.dasm (line 147): [0x0136] 7C02 0001       ADD A, 0x01
+brainfuck.dasm (line 148): [0x0138] 6101            SET [A], POP
+brainfuck.dasm (line 149): [0x0139] 7C02 0001       ADD A, 0x01
+brainfuck.dasm (line 150): [0x013B] 7F81 008E       SET PC, loop
+brainfuck.dasm (line 152): [0x013D]               :.duff
+brainfuck.dasm (line 153): [0x013D] 7C4A 0007       AND C, 0x7
+brainfuck.dasm (line 154): [0x013F] 7C4F 0001       SHL C, 1
+brainfuck.dasm (line 155): [0x0141] 7C42 0006       ADD C, 6
+brainfuck.dasm (line 156): [0x0143] 0B83            SUB PC, C
+brainfuck.dasm (line 158): [0x0144]               :.end
+brainfuck.dasm (line 160): [0x0144] 1F61            SET SP, J
+brainfuck.dasm (line 161): [0x0145] 60E1            SET J, POP
+brainfuck.dasm (line 162): [0x0146] 6381            SET PC, POP
+brainfuck.dasm (line 165): [0x0147]               bf_bootstrap:
+brainfuck.dasm (line 166): [0x0147]               .equ end_of_bf $
+brainfuck.dasm (line 167): [0x0147]               bf_bootstrap_ln:
+brainfuck.dasm (line 168): [0x0000]               .org 0
+brainfuck.dasm (line 170): [0x0000] 1A00            HWN I
+brainfuck.dasm (line 171): [0x0001] 7CC3 0001       SUB I, 1
+brainfuck.dasm (line 172): [0x0003]               :hw_init_loop
+brainfuck.dasm (line 173): [0x0003] 7CD2 FFFF       IFE I, 0xFFFF
+brainfuck.dasm (line 174): [0x0005] 7F82 FE8B       ADD PC, hw_found - $
+brainfuck.dasm (line 175): [0x0007] 1301            SET PUSH, Y
+brainfuck.dasm (line 176): [0x0008] 1701            SET PUSH, Z
+brainfuck.dasm (line 177): [0x0009] 1A20            HWQ I
+brainfuck.dasm (line 178): [0x000A] 60A1            SET Z, POP
+brainfuck.dasm (line 179): [0x000B] 6081            SET Y, POP
+brainfuck.dasm (line 180): [0x000C] 7C12 F615       IFE A, 0xf615
+brainfuck.dasm (line 181): [0x000E] 7C32 7349       IFE B, 0x7349
+brainfuck.dasm (line 182): [0x0010] 1881            SET Y, I
+brainfuck.dasm (line 183): [0x0011] 7C12 7406       IFE A, 0x7406
+brainfuck.dasm (line 184): [0x0013] 7C32 30CF       IFE B, 0x30cf
+brainfuck.dasm (line 185): [0x0015] 18A1            SET Z, I
+brainfuck.dasm (line 186): [0x0016] 7CC3 0001       SUB I, 1
+brainfuck.dasm (line 187): [0x0018]               reloc_hw_init_loop:
+brainfuck.dasm (line 188): [0x0018] 7F82 0192       ADD PC, hw_init_loop + $
+brainfuck.dasm (line 190): [0x001A]               :hw_found
+brainfuck.dasm (line 191): [0x001A] 7C01 0000       SET A, 0
+brainfuck.dasm (line 192): [0x001C] 7C21 FE6D       SET B, 0xFE6D
+brainfuck.dasm (line 193): [0x001E] 1240            HWI Y
+brainfuck.dasm (line 194): [0x001F] 7F82 FEB7       ADD PC, start - $
+brainfuck.dasm (line 197): [0x0021]               :output_char
+brainfuck.dasm (line 198): [0x0021] 2041            SET C, [A]
+brainfuck.dasm (line 199): [0x0022] 7C52 000A       IFE C, 0x0A
+brainfuck.dasm (line 200): [0x0024] 7F82 01BF       ADD PC, output_char_newline + $
+brainfuck.dasm (line 201): [0x0026] 7C4B F000       BOR C, 0xF000
+brainfuck.dasm (line 202): [0x0028] 0921            SET [B], C
+brainfuck.dasm (line 203): [0x0029] 7C22 0001       ADD B, 1
+brainfuck.dasm (line 204): [0x002B] 7C32 0000       IFE B, 0
+brainfuck.dasm (line 205): [0x002D] 7C21 FE6D       SET B, 0xFE6D
+brainfuck.dasm (line 206): [0x002F] 6381            SET PC, POP
+brainfuck.dasm (line 207): [0x0030]               :output_char_newline
+brainfuck.dasm (line 208): [0x0030] 7C26 0080       DIV B, 128
+brainfuck.dasm (line 209): [0x0032] 7C24 0080       MUL B, 128
+brainfuck.dasm (line 210): [0x0034] 7C22 0080       ADD B, 128
+brainfuck.dasm (line 211): [0x0036] 7C36 0080       IFL B, 128
+brainfuck.dasm (line 212): [0x0038] 7C21 FE6D       SET B, 0xFE6D
+brainfuck.dasm (line 213): [0x003A] 6381            SET PC, POP
+brainfuck.dasm (line 215): [0x003B]               :read_key_in
+brainfuck.dasm (line 216): [0x003B] 0301            SET PUSH, A
+brainfuck.dasm (line 217): [0x003C] 7C01 0001       SET A, 1
+brainfuck.dasm (line 218): [0x003E]               :read_key_in_loop
+brainfuck.dasm (line 219): [0x003E] 1640            HWI Z
+brainfuck.dasm (line 220): [0x003F] 7C52 0000       IFE C, 0
+brainfuck.dasm (line 221): [0x0041] 7F82 01CD       ADD PC, read_key_in_loop + $
+brainfuck.dasm (line 222): [0x0043] 6001            SET A, POP
+brainfuck.dasm (line 223): [0x0044] 0901            SET [A], C
+brainfuck.dasm (line 224): [0x0045] 6381            SET PC, POP
+brainfuck.dasm (line 225): [0x0046]               :start
+brainfuck.dasm (line 226): [0x0046] 7CC1 0064       SET I, 100
+brainfuck.dasm (line 227): [0x0048]               :bf_bootstrap_end
+brainfuck.dasm (line 228): [0x018F]               .org end_of_bf+$
+brainfuck.dasm (line 229): [0x018F]               bf_output:

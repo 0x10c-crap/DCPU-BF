@@ -3,6 +3,28 @@ DCPU-BF
 
 A compiler for the Brainfuck programming language targeting DCPU-16.
 
+For DCPU-16
+-----------
+
+The DCPU-16 Brainfuck compiler included has a "bf_compile" routine.  Call this routine with the input string (c-style) in I, and the pointer for output in J.  Example usage:
+
+    ; Test code
+    SET I, bf_code
+    SET J, bf_output
+    JSR bf_compile ; Compile bf_code and output result to bf_output
+    JSR bf_output ; Run bf_output
+
+    bf_code:
+        ; Hello world program from Wikipedia
+        .dw "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.", 0
+
+The DCPU-16 compiler outputs machine code.
+
+For PC
+------
+
 Use "dcpu-bf.exe inputfile.bf outputfile.dasm".  If no output file is specified, then it will use "[inputfile].dasm" for the output.
 
 Requires Mono.  On most versions of Linux, "sudo apt-get install mono-complete" or "sudo yum install mono-complete" will do the trick.  Then, you should start up DCPU-BF with mono: "mono dcpu-bf.exe inputfile.bf outputfile.dasm"
+
+The PC compiler outputs assembly.

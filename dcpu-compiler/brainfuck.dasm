@@ -1,0 +1,229 @@
+; DCPU Brainfuck Compiler
+
+; Test code
+SET I, bf_code
+SET J, bf_output
+JSR bf_compile ; Compile bf_code and output result to bf_output
+JSR bf_output ; Run bf_output
+SUB PC, 1
+
+bf_code:
+    ; Hello world program from Wikipedia
+    .dw "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.", 0
+    
+bf_compile:
+    ; I: Code to compile
+    ; J: Output
+    
+    ; Output bootstrap
+    SET [ptr_output_char], output_char
+    SET [ptr_read_key], read_key_in
+    ADD [ptr_output_char], J
+    ADD [ptr_read_key], J
+    SET A, J
+    SET B, I
+    SET C, bf_bootstrap_end - bf_bootstrap_ln
+    JSR memcpy
+    
+    ADD J, bf_bootstrap_end - bf_bootstrap_ln
+    ; Compile
+    SUB I, 1
+loop:
+    ADD I, 1
+    IFE [I], 0
+        SET PC, loop_done
+    IFE [I], '+'
+    IFE [I], '-'
+    IFE [I], '>'
+    IFE [I], '<'
+    IFE [I], ','
+    IFE [I], '.'
+    SET PC, loop_compile ; ignore non-command characters
+    SET PC, loop
+loop_compile:
+    IFE [I], '+'
+        SET PC, bf_inc_val
+    IFE [I], '-'
+        SET PC, bf_dec_val
+    IFE [I], '>'
+        SET PC, bf_inc_ptr
+    IFE [I], '<'
+        SET PC, bf_dec_ptr
+    SET J, {JSR 0x8000}
+    ADD J, 1
+    IFN [ptr_inc_count], 0
+        JSR output_ptr_inc
+    IFN [val_inc_count], 0
+        JSR output_val_inc
+    IFE [I], ','
+        SET PC, bf_read_key
+    IFE [I], '.'
+        SET PC, bf_put_char
+bf_inc_val:
+    ADD [val_inc_count], 1
+    IFN [ptr_inc_count], 0
+        JSR output_ptr_inc
+    SET PC, loop
+bf_dec_val:
+    SUB [val_inc_count], 1
+    IFN [ptr_inc_count], 0
+        JSR output_ptr_inc
+    SET PC, loop
+bf_inc_ptr:
+    ADD [ptr_inc_count], 1
+    IFN [val_inc_count], 0
+        JSR output_val_inc
+    SET PC, loop
+bf_dec_ptr:
+    SUB [ptr_inc_count], 1
+    IFN [val_inc_count], 0
+        JSR output_val_inc
+    SET PC, loop
+bf_read_key:
+    SET [J], [ptr_output_char]
+    ADD J, 1
+    SET PC, loop
+bf_put_char:
+    SET [J], [ptr_read_key]
+    ADD J, 1
+    SET PC, loop
+    
+output_val_inc:
+    SET A, {ADD [A], 0x8000}
+    SET B, [val_inc_count]
+    SET [val_inc_count], 0
+    SET PC, output_inc
+output_ptr_inc:
+    SET A, {ADD A, 0x8000}
+    SET B, [ptr_inc_count]
+    SET [ptr_inc_count], 0
+output_inc:
+    SET [J], A
+    ADD J, 1
+    SET [J], B
+    ADD J, 1
+    SET PC, POP
+    
+loop_done:
+    SET PC, POP
+    
+; Compiler variables
+val_inc_count:
+    .dw 0
+ptr_inc_count:
+    .dw 0
+ptr_output_char:
+    .dw output_char
+ptr_read_key:
+    .dw read_key_in
+    
+; void memcpy(void* dst, void* src, int words)
+:memcpy                                         ; Credit for this function goes to Tobba
+    SET PUSH, J
+    SET J, SP
+      
+    SET SP, B
+    ADD B, C
+  	
+    SET PC, .duff
+      
+    :.loop
+    IFE SP, B
+    SET PC, .end
+      
+	SET [A], POP
+	ADD A, 0x01
+	SET [A], POP
+	ADD A, 0x01
+	SET [A], POP
+	ADD A, 0x01
+	SET [A], POP
+	ADD A, 0x01
+	SET [A], POP
+	ADD A, 0x01
+	SET [A], POP
+	ADD A, 0x01
+	SET [A], POP
+	ADD A, 0x01
+	SET [A], POP
+	ADD A, 0x01
+    SET PC, loop
+      
+    :.duff
+    AND C, 0x7
+    SHL C, 1
+    ADD C, 6
+    SUB PC, C
+    
+    :.end
+      
+    SET SP, J
+    SET J, POP
+	SET PC, POP
+    
+; Bootstrap
+bf_bootstrap:
+.equ end_of_bf $
+bf_bootstrap_ln:
+.org 0
+; Set up hardware
+HWN I
+SUB I, 1
+:hw_init_loop
+    IFE I, 0xFFFF
+        ADD PC, hw_found - $
+    SET PUSH, Y
+    SET PUSH, Z
+        HWQ I
+    SET Z, POP
+    SET Y, POP
+    IFE A, 0xf615
+        IFE B, 0x7349
+            SET Y, I ; Screen
+    IFE A, 0x7406
+        IFE B, 0x30cf
+            SET Z, I ; Keyboard
+    SUB I, 1
+reloc_hw_init_loop:
+    ADD PC, hw_init_loop + $
+
+:hw_found
+    SET A, 0
+    SET B, 0xFE6D
+    HWI Y ; Map screen memory
+    ADD PC, start - $
+
+; SUBROUTINES
+:output_char
+    SET C, [A]
+    IFE C, 0x0A ; '\n'
+        ADD PC, output_char_newline + $
+    BOR C, 0xF000
+    SET [B], C
+    ADD B, 1
+    IFE B, 0
+        SET B, 0xFE6D ; Wrap around to start of screen memory
+    SET PC, POP
+:output_char_newline
+    DIV B, 128
+    MUL B, 128
+    ADD B, 128
+    IFL B, 128
+        SET B, 0xFE6D
+    SET PC, POP
+
+:read_key_in
+    SET PUSH, A
+        SET A, 1
+:read_key_in_loop
+        HWI Z
+        IFE C, 0
+            ADD PC, read_key_in_loop + $
+    SET A, POP
+    SET [A], C
+    SET PC, POP
+:start
+    SET I, 100
+:bf_bootstrap_end
+.org end_of_bf+$
+bf_output:
