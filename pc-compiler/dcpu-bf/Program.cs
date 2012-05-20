@@ -88,6 +88,7 @@ namespace dcpu_bf
             int valueOffset = 0;
             int bracketStack = 0, totalLabelPairs = 0;
             int codeLength = 100;
+            Stack<string> closingBracketNames = new Stack<string>();
             foreach (char c in brainfuck)
             {
                 switch (c)
@@ -195,14 +196,18 @@ namespace dcpu_bf
                                 output += ":bracket_start_" + totalLabelPairs.ToString() + "_" + bracketStack.ToString() + 
                                     "\nIFE [A], 0\nSET PC, bracket_end_" +
                                     totalLabelPairs.ToString() + "_" + bracketStack.ToString() + "\n";
+
+                                closingBracketNames.Push(totalLabelPairs.ToString() + "_" + bracketStack.ToString());
+
+                                totalLabelPairs++;
                                 codeLength += 4;
                                 break;
                             case ']':
                                 output += "IFN [A], 0\nSET PC, bracket_start_" +
-                                    totalLabelPairs.ToString() + "_" + bracketStack.ToString() +
-                                    "\n:bracket_end_" + totalLabelPairs.ToString() + "_" + bracketStack.ToString() + "\n";
+                                    closingBracketNames.Peek() +
+                                    "\n:bracket_end_" + closingBracketNames.Pop() + "\n";
+
                                 bracketStack--;
-                                totalLabelPairs++;
                                 codeLength += 4;
                                 break;
                         }
